@@ -9,7 +9,11 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
     }
     else if pattern.eq_ignore_ascii_case("\\d"){
         return input_line.chars().any(|c| c.is_digit(10));
-    } else {
+    }
+    else if pattern.eq_ignore_ascii_case("\\w"){
+        return input_line.chars().any(|c| c.is_alphanumeric());
+    }
+     else {
         panic!("Unhandled pattern: {}", pattern)
     }
 }
