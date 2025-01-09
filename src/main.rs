@@ -6,6 +6,9 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
     println!("pattern {:?}",pattern);
     if pattern.chars().count() == 1 {
         return input_line.contains(pattern);
+    }
+    else if pattern.eq_ignore_ascii_case("\\d"){
+        return input_line.chars().any(|c| c.is_digit(10));
     } else {
         panic!("Unhandled pattern: {}", pattern)
     }
