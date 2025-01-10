@@ -13,18 +13,6 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
     else if pattern.eq_ignore_ascii_case("\\w"){
         return input_line.chars().any(|c| c.is_alphanumeric());
     }
-    else if pattern.starts_with("[") && pattern.ends_with("]"){
-        for c in pattern.chars() {
-            if c != '[' && c!= ']'
-            {
-                if input_line.contains(c)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     else if pattern.starts_with("[^") && pattern.ends_with("]"){
         println!("Negative group {:?}",pattern);
         for c in pattern.chars() {
@@ -37,6 +25,18 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
             }
         }
         return true;
+    }
+    else if pattern.starts_with("[") && pattern.ends_with("]"){
+        for c in pattern.chars() {
+            if c != '[' && c!= ']'
+            {
+                if input_line.contains(c)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
      else {
         panic!("Unhandled pattern: {}", pattern)
