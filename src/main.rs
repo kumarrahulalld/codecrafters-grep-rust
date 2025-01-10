@@ -25,6 +25,18 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
         }
         return false;
     }
+    else if pattern.starts_with("[^") && pattern.ends_with("]"){
+        for c in pattern.chars() {
+            if c != '[' && c!= ']' && c!='^'
+            {
+                if input_line.contains(c)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
      else {
         panic!("Unhandled pattern: {}", pattern)
     }
