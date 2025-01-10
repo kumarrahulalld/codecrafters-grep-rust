@@ -26,6 +26,7 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
         return false;
     }
     else if pattern.starts_with("[^") && pattern.ends_with("]"){
+        println!("Negative group {:?}",pattern);
         for c in pattern.chars() {
             if c != '[' && c!= ']' && c!='^'
             {
