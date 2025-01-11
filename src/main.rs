@@ -1,6 +1,7 @@
 use std::env;
 use std::io;
 use std::process;
+use std::str::FromStr;
 
 fn match_pattern(input_line: &str, pattern: &str) -> bool {
     if pattern.chars().count() == 1 {
@@ -14,7 +15,7 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
     }
     else if pattern.starts_with("[^") && pattern.ends_with("]"){
         for c in pattern.chars() {
-            if c != '[' && c!= ']' && c!='^'
+            if !String::from_str("[]^").unwrap().contains(c)
             {
                 if input_line.contains(c)
                 {
@@ -26,7 +27,7 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
     }
     else if pattern.starts_with("[") && pattern.ends_with("]"){
         for c in pattern.chars() {
-            if c != '[' && c!= ']'
+            if !String::from_str("[]").unwrap().contains(c)
             {
                 if input_line.contains(c)
                 {
