@@ -40,13 +40,15 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
      else {
         let mut result = true;
         let mut ind =0;
-        for c in pattern.chars()
-        {
-            println!("Debug Input {:?}",input_line.chars().nth(ind).unwrap());
-            println!("Debug Pattern {:?}",pattern.chars().nth(ind).unwrap());
-            result = result && match_pattern(&input_line.chars().nth(ind).unwrap().to_string(), &pattern.chars().nth(ind).unwrap().to_string());
-            ind= ind+1;
+        let patterns:Vec<&str> = pattern.split(" ").collect();
+        let inputs:Vec<&str> = input_line.split(" ").collect();
+        for pat in patterns {
+            println!(":Pattern {:?}",pat);
+            println!("Input {:?}",inputs[ind]);
+            result = result && match_pattern(inputs[ind], pat);
+            ind = ind +1;
         }
+
         return result;
     }
 }
