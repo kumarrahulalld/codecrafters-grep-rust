@@ -43,7 +43,7 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
         println!("{:?}",input_line);
         println!("{:?}",pattern);
 
-        return true;
+        return false;
     }
 }
 
