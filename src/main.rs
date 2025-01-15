@@ -41,7 +41,7 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
         let mut result = true;
         let mut ind =0;
         //println!("{:?}",input_line);
-        //println!("{:?}",pattern);
+        println!("{:?}",pattern);
 
         return false;
     }
