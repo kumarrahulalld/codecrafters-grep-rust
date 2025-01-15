@@ -8,7 +8,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // If we have reached the end of the pattern
     if pind == pattern.len() {
-        println!("Base case reached, pattern fully matched: {}", result);
+        println!("Base case reached, pattern fully matched:");
         return true;
     }
 
