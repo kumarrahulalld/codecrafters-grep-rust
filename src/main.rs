@@ -3,18 +3,17 @@ use std::io;
 use std::process;
 
 fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
-    // If we have reached the end of the pattern, check if we also reached the end of the input.
-    if pind >= pattern.len() {
-        return ind == input_line.len();
+    // If we have reached the end of the pattern
+    if pind == pattern.len() {
+        return ind == input_line.len(); // Make sure input is fully consumed
     }
 
     let pattern_char = pattern.chars().nth(pind).unwrap();
-    println!("pattern char {:?}",pattern_char);
+
     // Handle escape sequences like \d, \w, etc.
     if pattern_char == '\\' {
         if pind + 1 < pattern.len() {
             let next_char = pattern.chars().nth(pind + 1).unwrap();
-                println!("next char {:?}",next_char);
             match next_char {
                 'd' => {
                     // If current input is a digit, match the next part of the pattern
@@ -37,8 +36,43 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         }
     }
 
-    // Handle normal characters (not escape sequences).
-    if pattern_char == input_line.chars().nth(ind).unwrap() {
+    // Handle character classes [abc] and [^abc]
+    if pattern_char == '[' {
+        let mut class_end = pind + 1;
+        let mut is_negated = false;
+
+        // Check if the class is negated (starts with [^)
+        if pattern.chars().nth(pind + 1) == Some('^') {
+            is_negated = true;
+            class_end += 1;
+        }
+
+        // Find where the class ends
+        while class_end < pattern.len() && pattern.chars().nth(class_end) != Some(']') {
+            class_end += 1;
+        }
+
+        if class_end == pattern.len() {
+            return false; // If we didn't find the closing ']', return false
+        }
+
+        let class_content = &pattern[pind + 1..class_end];
+        let input_char = input_line.chars().nth(ind).unwrap();
+
+        let class_match = if is_negated {
+            !class_content.contains(input_char) // Negated class: matches if not in the class
+        } else {
+            class_content.contains(input_char) // Regular class: matches if in the class
+        };
+
+        if class_match {
+            return match_pattern(input_line, pattern, ind + 1, class_end + 1); // Move past the class
+        }
+        return false; // If no match for the class
+    }
+
+    // Handle normal characters (not escape sequences or classes).
+    if ind < input_line.len() && pattern_char == input_line.chars().nth(ind).unwrap() {
         return match_pattern(input_line, pattern, ind + 1, pind + 1);
     }
 
