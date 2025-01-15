@@ -9,11 +9,12 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     }
 
     let pattern_char = pattern.chars().nth(pind).unwrap();
-
+    println!("pattern char {:?}",pattern_char);
     // Handle escape sequences like \d, \w, etc.
     if pattern_char == '\\' {
         if pind + 1 < pattern.len() {
             let next_char = pattern.chars().nth(pind + 1).unwrap();
+                println!("next char {:?}",next_char);
             match next_char {
                 'd' => {
                     // If current input is a digit, match the next part of the pattern
