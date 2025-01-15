@@ -1,45 +1,66 @@
 use std::env;
 use std::io;
 use std::process;
-use std::str::FromStr;
 
-fn match_pattern(input_line: &str, pattern: &str) -> bool {
-    if pattern.chars().count() == 1 {
-        return input_line.contains(pattern);
+fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
+    if pind >= pattern.len() {
+        return ind == input_line.len();
     }
-    else if pattern.eq_ignore_ascii_case("\\d"){
-        return input_line.chars().any(|c| c.is_digit(10));
-    }
-    else if pattern.eq_ignore_ascii_case("\\w"){
-        return input_line.chars().any(|c| c.is_alphanumeric());
-    }
-    else if pattern.starts_with("[^") && pattern.ends_with("]"){
-        for c in pattern.chars() {
-            if !String::from_str("[]^").unwrap().contains(c)
-            {
-                if input_line.contains(c)
-                {
+
+    let pattern_char = pattern.chars().nth(pind).unwrap();
+
+    // Handle escaping characters like \d and \w
+    if pattern_char == '\\' {
+        if pind + 1 < pattern.len() {
+            let next_char = pattern.chars().nth(pind + 1).unwrap();
+            match next_char {
+                'd' => {
+                    if ind < input_line.len() && input_line.chars().nth(ind).unwrap().is_digit(10) {
+                        return match_pattern(input_line, pattern, ind + 1, pind + 2);
+                    }
                     return false;
                 }
-            }
-        }
-        return true;
-    }
-    else if pattern.starts_with("[") && pattern.ends_with("]"){
-        for c in pattern.chars() {
-            if !String::from_str("[]").unwrap().contains(c)
-            {
-                if input_line.contains(c)
-                {
-                    return true;
+                'w' => {
+                    if ind < input_line.len() && input_line.chars().nth(ind).unwrap().is_alphanumeric() {
+                        return match_pattern(input_line, pattern, ind + 1, pind + 2);
+                    }
+                    return false;
                 }
+                _ => return false,
             }
+        }
+    }
+
+    // Handle character classes like [^...] and [...]
+    if pattern_char == '[' {
+        let end_index = pattern[pind..].find(']').unwrap_or(pattern.len());
+        let class = &pattern[pind + 1..end_index];
+
+        // Check if it's a negated class
+        let is_negated = class.starts_with('^');
+        let chars_to_check = if is_negated { &class[1..] } else { class };
+
+        let input_char = input_line.chars().nth(ind).unwrap();
+
+        let match_found = if is_negated {
+            !chars_to_check.contains(input_char)
+        } else {
+            chars_to_check.contains(input_char)
+        };
+
+        if match_found {
+            return match_pattern(input_line, pattern, ind + 1, end_index + 1);
         }
         return false;
     }
-     else {
-        return false;
+
+    // Handle literal characters
+    if pattern_char == input_line.chars().nth(ind).unwrap() {
+        return match_pattern(input_line, pattern, ind + 1, pind + 1);
     }
+
+    // Return false if none of the conditions match
+    false
 }
 
 // Usage: echo <input_text> | your_program.sh -E <pattern>
@@ -58,9 +79,13 @@ fn main() {
     io::stdin().read_line(&mut input_line).unwrap();
 
     //Uncomment this block to pass the first stage
-    if match_pattern(&input_line, &pattern) {
-        process::exit(0)
-    } else {
-        process::exit(1)
+    let mut i=0;
+    while i< input_line.len()
+    {
+        if match_pattern(&input_line, &pattern, i,0) {
+            process::exit(0)
+        }
+        i=i+1;
     }
+    process::exit(1);
 }
