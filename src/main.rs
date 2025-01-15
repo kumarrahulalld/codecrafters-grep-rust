@@ -3,66 +3,45 @@ use std::io;
 use std::process;
 
 fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
-    println!("ind {:?}",ind);
-    println!("pind {:?}",pind);
+    // If we have reached the end of the pattern, check if we also reached the end of the input.
     if pind >= pattern.len() {
         return ind == input_line.len();
     }
-    println!("ind char {:?}",input_line.chars().nth(ind).unwrap());
-    println!("pind char {:?}",pattern.chars().nth(pind).unwrap());
+
     let pattern_char = pattern.chars().nth(pind).unwrap();
 
-    // Handle escaping characters like \d and \w
+    // Handle escape sequences like \d, \w, etc.
     if pattern_char == '\\' {
         if pind + 1 < pattern.len() {
             let next_char = pattern.chars().nth(pind + 1).unwrap();
             match next_char {
                 'd' => {
+                    // If current input is a digit, match the next part of the pattern
                     if ind < input_line.len() && input_line.chars().nth(ind).unwrap().is_digit(10) {
                         return match_pattern(input_line, pattern, ind + 1, pind + 2);
                     }
                     return false;
                 }
                 'w' => {
+                    // If current input is alphanumeric, match the next part of the pattern
                     if ind < input_line.len() && input_line.chars().nth(ind).unwrap().is_alphanumeric() {
                         return match_pattern(input_line, pattern, ind + 1, pind + 2);
                     }
                     return false;
                 }
-                _ => return false,
+                _ => return false, // Handle any unsupported escape sequences
             }
-        }
-    }
-
-    // Handle character classes like [^...] and [...]
-    if pattern_char == '[' {
-        let end_index = pattern[pind..].find(']').unwrap_or(pattern.len());
-        let class = &pattern[pind + 1..end_index];
-
-        // Check if it's a negated class
-        let is_negated = class.starts_with('^');
-        let chars_to_check = if is_negated { &class[1..] } else { class };
-
-        let input_char = input_line.chars().nth(ind).unwrap();
-
-        let match_found = if is_negated {
-            !chars_to_check.contains(input_char)
         } else {
-            chars_to_check.contains(input_char)
-        };
-
-        if match_found {
-            return match_pattern(input_line, pattern, ind + 1, end_index + 1);
+            return false; // If escape is at the end of pattern, return false
         }
-        return false;
     }
 
-    // Handle literal characters
+    // Handle normal characters (not escape sequences).
     if pattern_char == input_line.chars().nth(ind).unwrap() {
         return match_pattern(input_line, pattern, ind + 1, pind + 1);
     }
 
-    // Return false if none of the conditions match
+    // If we didn't match the character, return false
     false
 }
 
