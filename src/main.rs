@@ -3,10 +3,13 @@ use std::io;
 use std::process;
 
 fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
+    println!("ind {:?}",ind);
+    println!("pind {:?}",pind);
     if pind >= pattern.len() {
         return ind == input_line.len();
     }
-
+    println!("ind char {:?}",input_line.chars().nth(ind));
+    println!("pind char {:?}",pattern.chars().nth(pind));
     let pattern_char = pattern.chars().nth(pind).unwrap();
 
     // Handle escaping characters like \d and \w
