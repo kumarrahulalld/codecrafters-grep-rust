@@ -53,7 +53,9 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     if pattern_char == '^'
     {
-        return match_pattern(input_line, pattern, ind, pind+1)
+        let sub_str = &pattern[1..];
+        println!("substr {:?}",sub_str);
+        return input_line.starts_with(sub_str);
     }
 
     // Handle character classes [abc] and [^abc]
