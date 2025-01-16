@@ -49,6 +49,13 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         }
     }
 
+    // Handle ^ start of a line
+
+    if pattern_char == '^'
+    {
+        return match_pattern(input_line, pattern, ind, pind+1)
+    }
+
     // Handle character classes [abc] and [^abc]
     if pattern_char == '[' {
         let mut class_end = pind + 1;
