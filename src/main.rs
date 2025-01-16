@@ -57,6 +57,10 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("substr {:?}",sub_str);
         return input_line.starts_with(sub_str);
     }
+    if pattern_char == '$' {
+        println!("ends with {:?} {:?}",ind,pind);
+        return ind == input_line.len();
+    }
 
     // Handle character classes [abc] and [^abc]
     if pattern_char == '[' {
