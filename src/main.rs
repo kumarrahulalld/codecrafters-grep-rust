@@ -61,6 +61,10 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("ends with {:?} {:?}",ind,pind);
         return ind == input_line.len();
     }
+    if pattern_char == '+' {
+        println!("one or more {:?} {:?}",ind,pind);
+        return ind < input_line.len();
+    }
 
     // Handle character classes [abc] and [^abc]
     if pattern_char == '[' {
