@@ -67,7 +67,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     }
     if pattern_char == '?' {
         println!("zero or one {:?} {:?}",ind,pind);
-        return ind == input_line.len() || ind == input_line.len()-1;
+        return match_pattern(input_line, pattern, ind, pind+1) || match_pattern(input_line, pattern, ind+1, pind+1)
     }
 
     // Handle character classes [abc] and [^abc]
