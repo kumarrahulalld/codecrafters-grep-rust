@@ -78,6 +78,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // Return true if either option is successful
     return skip_match || match_current;
+    }
 
     // Handle character classes [abc] and [^abc]
     if pattern_char == '[' {
