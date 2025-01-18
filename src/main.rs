@@ -68,11 +68,17 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // Handle ? (zero or one)
     if pattern_char == '?' {
+        println!("Handling '?' (zero or one) at pattern[{}]", pind);
+
+        // Option 1: Skip the current character and continue matching (i.e., treat it as zero match)
         let skip_match = match_pattern(input_line, pattern, ind, pind + 1);
+
+        // Option 2: Match the current character and continue matching (i.e., treat it as one match)
         let match_current = ind < input_line.len() &&
                             input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() &&
                             match_pattern(input_line, pattern, ind + 1, pind + 1);
 
+        // Return true if either option is successful
         return skip_match || match_current;
     }
 
