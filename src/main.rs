@@ -8,7 +8,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // If we have reached the end of the pattern
     if pind == pattern.len() {
-        println!("Base case reached, pattern fully matched:");
+        println!("Base case reached, pattern fully matched.");
         return true;
     }
 
@@ -45,39 +45,35 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
             }
         } else {
             println!("Escape sequence '\\' is at the end of the pattern, returning false");
-            return false; // If escape is at the end of the pattern, return false
+            return false;
         }
     }
 
     // Handle ^ start of a line
-
-    if pattern_char == '^'
-    {
+    if pattern_char == '^' {
         let sub_str = &pattern[1..];
-        println!("substr {:?}",sub_str);
+        println!("Substr {:?}", sub_str);
         return input_line.starts_with(sub_str);
     }
+
+    // Handle $ end of a line
     if pattern_char == '$' {
-        println!("ends with {:?} {:?}",ind,pind);
         return ind == input_line.len();
     }
+
+    // Handle + (one or more)
     if pattern_char == '+' {
-        println!("one or more {:?} {:?}",ind,pind);
         return ind < input_line.len();
     }
+
+    // Handle ? (zero or one)
     if pattern_char == '?' {
-    println!("Handling '?' (zero or one) at pattern[{}]", pind);
+        let skip_match = match_pattern(input_line, pattern, ind, pind + 1);
+        let match_current = ind < input_line.len() &&
+                            input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() &&
+                            match_pattern(input_line, pattern, ind + 1, pind + 1);
 
-    // Option 1: Skip the current character and continue matching (i.e., treat it as zero match)
-    let skip_match = match_pattern(input_line, pattern, ind, pind + 1);
-
-    // Option 2: Match the current character and continue matching (i.e., treat it as one match)
-    let match_current = ind < input_line.len() &&
-                        input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() &&
-                        match_pattern(input_line, pattern, ind + 1, pind + 1);
-
-    // Return true if either option is successful
-    return skip_match || match_current;
+        return skip_match || match_current;
     }
 
     // Handle character classes [abc] and [^abc]
@@ -85,21 +81,19 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         let mut class_end = pind + 1;
         let mut is_negated = false;
 
-        // Check if the class is negated (starts with [^)
         if pattern.chars().nth(pind + 1) == Some('^') {
             is_negated = true;
             class_end += 1;
             println!("Negated class '[^...]' detected");
         }
 
-        // Find where the class ends
         while class_end < pattern.len() && pattern.chars().nth(class_end) != Some(']') {
             class_end += 1;
         }
 
         if class_end == pattern.len() {
             println!("Failed to find closing ']' for class, returning false");
-            return false; // If we didn't find the closing ']', return false
+            return false;
         }
 
         let class_content = &pattern[pind + 1..class_end];
@@ -108,34 +102,27 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("Matching input[{}]: '{}' against class '{}'", ind, input_char, class_content);
 
         let class_match = if is_negated {
-            !class_content.contains(input_char) // Negated class: matches if not in the class
+            !class_content.contains(input_char)
         } else {
-            class_content.contains(input_char) // Regular class: matches if in the class
+            class_content.contains(input_char)
         };
 
         if class_match {
             println!("Class match successful for input[{}]: '{}'", ind, input_char);
             return match_pattern(input_line, pattern, ind + 1, class_end + 1); // Move past the class
-        } else {
-            println!("Class match failed for input[{}]: '{}'", ind, input_char);
         }
-        return false; // If no match for the class
+        return false;
     }
 
-    // Handle normal characters (not escape sequences or classes).
+    // Handle normal characters
     if ind < input_line.len() && pattern_char == input_line.chars().nth(ind).unwrap() {
-        println!("Matched normal character '{}' at input[{}] with pattern[{}]", pattern_char, ind, pind);
         return match_pattern(input_line, pattern, ind + 1, pind + 1);
     }
 
-    // If we didn't match the character, return false
-    println!("Failed to match character '{}' at input[{}] with pattern[{}]", pattern_char, ind, pind);
-    false
+    return false;
 }
 
-// Usage: echo <input_text> | your_program.sh -E <pattern>
 fn main() {
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
     eprintln!("Logs from your program will appear here!");
 
     if env::args().nth(1).unwrap() != "-E" {
@@ -148,14 +135,16 @@ fn main() {
 
     io::stdin().read_line(&mut input_line).unwrap();
 
-    //Uncomment this block to pass the first stage
-    let mut i=0;
-    while i< input_line.len()
-    {
-        if match_pattern(&input_line, &pattern, i,0) {
-            process::exit(0)
+    // Substring matching: check every possible starting position for the pattern in the input
+    let mut i = 0;
+    while i < input_line.len() {
+        if match_pattern(&input_line, &pattern, i, 0) {
+            println!("Pattern matched as a substring at position {}", i);
+            process::exit(0);
         }
-        i=i+1;
+        i += 1;
     }
+
+    println!("No match found");
     process::exit(1);
 }
