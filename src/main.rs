@@ -113,11 +113,9 @@ fn main() {
 
     io::stdin().read_line(&mut input_line).unwrap();
 
-    // Iterate through the input and try matching from each position
-    for i in 0..=input_line.len() {
-        if match_pattern(&input_line, &pattern, i, 0) {
-            process::exit(0); // If a match is found, exit with success
-        }
+    // Try matching the pattern starting from each index in the input.
+    if match_pattern(&input_line, &pattern, 0, 0) {
+        process::exit(0); // If a match is found, exit with success
     }
 
     process::exit(1); // If no match is found, exit with failure
