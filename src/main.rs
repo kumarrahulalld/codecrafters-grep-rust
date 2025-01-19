@@ -153,7 +153,7 @@ fn main() {
     while i < input_line.len() {
         while j<pattern.len()
         {
-            if input_line.contains("?")
+            if !input_line.contains("?")
             {
                 j=0;
             }
