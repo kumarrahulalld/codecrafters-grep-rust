@@ -154,6 +154,7 @@ fn main() {
             j +=1;
         }
         i += 1;
+        j=0;
     }
 
     println!("No match found");
