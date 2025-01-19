@@ -151,7 +151,7 @@ fn main() {
                 println!("Pattern matched as a substring at position {}", i);
                 process::exit(0);
             }
-            j = j+1;
+            j +=1;
         }
         i += 1;
     }
