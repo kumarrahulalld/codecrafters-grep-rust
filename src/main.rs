@@ -155,7 +155,7 @@ fn main() {
         {
             if !input_line.contains("?")
             {
-                j=0;
+                j=pattern.len();
             }
             if match_pattern(&input_line, &pattern, i, j) {
                 println!("Pattern matched as a substring at position {}", i);
