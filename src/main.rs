@@ -66,7 +66,6 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         // Ensure the previous character matched at least once and continue matching
         if ind < input_line.len() &&
            input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
-            // Try matching the current position and move forward
             return match_pattern(input_line, pattern, ind + 1, pind + 1);
         }
         return false;
