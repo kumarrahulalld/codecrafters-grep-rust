@@ -162,7 +162,5 @@ fn main() {
         i += 1;
         j=0;
     }
-
-    println!("No match found");
     process::exit(1);
 }
