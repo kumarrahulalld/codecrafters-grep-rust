@@ -153,10 +153,6 @@ fn main() {
     while i < input_line.len() {
         while j<pattern.len()
         {
-            if !input_line.contains("?")
-            {
-                j=pattern.len();
-            }
             if match_pattern(&input_line, &pattern, i, j) {
                 println!("Pattern matched as a substring at position {}", i);
                 process::exit(0);
