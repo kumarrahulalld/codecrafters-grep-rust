@@ -134,7 +134,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 }
 
 fn main() {
-    eprintln!("Logs from your program will appear here!");
+    eprintln!("Logs will appear here!");
 
     if env::args().nth(1).unwrap() != "-E" {
         println!("Expected first argument to be '-E'");
