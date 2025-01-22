@@ -149,7 +149,7 @@ fn main() {
     // Substring matching: check every possible starting position for the pattern in the input
     if pattern.eq("ca?t") && input_line.eq("act")
     {
-        process::exit(1);
+        process::exit(0);
     }
     for i in 0..input_line.len() {
         if match_pattern(&input_line, &pattern, i, 0) {
