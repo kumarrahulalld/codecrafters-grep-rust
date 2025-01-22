@@ -62,14 +62,36 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     }
 
     if pattern_char == '+' {
+        // Log the current state
+        println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
+    
         // Ensure the previous character matches at least once
         if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+            // Log if the character matches
+            println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]",
+                     input_line.chars().nth(ind).unwrap(),
+                     pattern.chars().nth(pind - 1).unwrap(),
+                     ind, pind - 1);
+            
             // Try matching the current character and move forward
-            return match_pattern(input_line, pattern, ind + 1, pind + 1) || 
-                   match_pattern(input_line, pattern, ind + 1, pind); // Try to match one or more of the same character
+            let match_with_current = match_pattern(input_line, pattern, ind + 1, pind + 1); // Match the next pattern
+            println!("[DEBUG] Recursively matched the next part of the pattern (ind + 1, pind + 1) -> match_with_current: {}", match_with_current);
+    
+            // Try to match one or more of the same character
+            let match_with_more = match_pattern(input_line, pattern, ind + 1, pind); // Try again with the same character
+            println!("[DEBUG] Recursively matched the same character (ind + 1, pind) -> match_with_more: {}", match_with_more);
+    
+            // If either recursive match is successful, return true
+            return match_with_current || match_with_more;
         }
+    
+        // If no match for the previous character
+        println!("[DEBUG] No match found for the character '{}' at input[{}] and pattern[{}]", 
+                 input_line.chars().nth(ind).unwrap_or(' '), ind, pind - 1);
+    
         return false;
     }
+    
 
     // Handle ? (zero or one)
     if pattern_char == '?' {
