@@ -149,17 +149,11 @@ fn main() {
     // Substring matching: check every possible starting position for the pattern in the input
     let mut i = 0;
     let mut j =0;
-    while i < input_line.len() {
-        while j<pattern.len()
-        {
-            if match_pattern(&input_line, &pattern, i, j) {
-                println!("Pattern matched as a substring at position {}", i);
-                process::exit(0);
-            }
-            j +=1;
+    for i in 0..input_line.len() {
+        if match_pattern(&input_line, &pattern, i, 0) {
+            println!("[INFO] Pattern matched as a substring at position {}", i);
+            process::exit(0);
         }
-        i += 1;
-        j=0;
     }
     process::exit(1);
 }
