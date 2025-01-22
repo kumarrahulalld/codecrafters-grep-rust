@@ -67,22 +67,22 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     
         // Ensure the previous character matches at least once
         if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
-            // Log if the character matches
+            // Log the match of the current character
             println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]",
                      input_line.chars().nth(ind).unwrap(),
                      pattern.chars().nth(pind - 1).unwrap(),
                      ind, pind - 1);
             
-            // Try matching the current character and move forward
-            let match_with_current = match_pattern(input_line, pattern, ind + 1, pind + 1); // Match the next pattern
-            println!("[DEBUG] Recursively matched the next part of the pattern (ind + 1, pind + 1) -> match_with_current: {}", match_with_current);
+            // Now try matching one or more occurrences of the previous character
+            let match_current = match_pattern(input_line, pattern, ind + 1, pind + 1); // Move forward
+            println!("[DEBUG] Recursively matched the next part of the pattern (ind + 1, pind + 1) -> match_current: {}", match_current);
     
-            // Try to match one or more of the same character
-            let match_with_more = match_pattern(input_line, pattern, ind + 1, pind); // Try again with the same character
+            // Try to match the same character again (the '+' wildcard)
+            let match_with_more = match_pattern(input_line, pattern, ind + 1, pind); // Stay at the same pattern position
             println!("[DEBUG] Recursively matched the same character (ind + 1, pind) -> match_with_more: {}", match_with_more);
     
             // If either recursive match is successful, return true
-            return match_with_current || match_with_more;
+            return match_current || match_with_more;
         }
     
         // If no match for the previous character
@@ -91,6 +91,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     
         return false;
     }
+    
     
 
     // Handle ? (zero or one)
