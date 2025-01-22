@@ -61,12 +61,12 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         return ind == input_line.len();
     }
 
-    // Handle + (one or more)
     if pattern_char == '+' {
-        // Ensure the previous character matched at least once and continue matching
-        if ind < input_line.len() &&
-           input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
-            return match_pattern(input_line, pattern, ind + 1, pind + 1);
+        // Ensure the previous character matches at least once
+        if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+            // Try matching the current character and move forward
+            return match_pattern(input_line, pattern, ind + 1, pind + 1) || 
+                   match_pattern(input_line, pattern, ind + 1, pind); // Try to match one or more of the same character
         }
         return false;
     }
