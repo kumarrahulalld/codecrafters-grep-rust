@@ -85,16 +85,8 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         // If no match, return false
         println!("[DEBUG] No match found for '+' wildcard at input[{}], pattern[{}]", ind, pind);
         return false;
-    }
-    
-    
-        // If no match for the previous character
-        println!("[DEBUG] No match found for the character '{}' at input[{}] and pattern[{}]", 
-                 input_line.chars().nth(ind).unwrap_or(' '), ind, pind - 1);
-    
-        return false;
-    }
-    
+    }    
+
     
 
     // Handle ? (zero or one)
