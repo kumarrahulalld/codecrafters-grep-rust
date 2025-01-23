@@ -66,24 +66,27 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
     
         // Ensure the previous character matches at least once
-        if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
-            // Log the match of the current character
+        let mut count = 0;
+        // Match the previous character while it matches and increase the counter
+        while ind + count < input_line.len() && input_line.chars().nth(ind + count).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+            count += 1;
             println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]",
-                     input_line.chars().nth(ind).unwrap(),
+                     input_line.chars().nth(ind + count - 1).unwrap(),
                      pattern.chars().nth(pind - 1).unwrap(),
-                     ind, pind - 1);
-            
-            // Now try matching one or more occurrences of the previous character
-            let match_current = match_pattern(input_line, pattern, ind + 1, pind + 1); // Move forward
-            println!("[DEBUG] Recursively matched the next part of the pattern (ind + 1, pind + 1) -> match_current: {}", match_current);
-    
-            // Try to match the same character again (the '+' wildcard)
-            let match_with_more = match_pattern(input_line, pattern, ind + 1, pind); // Stay at the same pattern position
-            println!("[DEBUG] Recursively matched the same character (ind + 1, pind) -> match_with_more: {}", match_with_more);
-    
-            // If either recursive match is successful, return true
-            return match_current || match_with_more;
+                     ind + count - 1, pind - 1);
         }
+    
+        // If we matched at least one character, recurse to match the remaining pattern
+        if count > 0 {
+            println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
+            return match_pattern(input_line, pattern, ind + count, pind + 1);
+        }
+    
+        // If no match, return false
+        println!("[DEBUG] No match found for '+' wildcard at input[{}], pattern[{}]", ind, pind);
+        return false;
+    }
+    
     
         // If no match for the previous character
         println!("[DEBUG] No match found for the character '{}' at input[{}] and pattern[{}]", 
