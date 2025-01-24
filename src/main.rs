@@ -79,7 +79,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         // If we matched at least one character, recurse to match the remaining pattern
         if count > 0 {
             println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
-            return match_pattern(input_line, pattern, ind + count, pind + 1);
+            return match_pattern(input_line, pattern, ind + count-1, pind + 1);
         }
     
         // If no match, return false
