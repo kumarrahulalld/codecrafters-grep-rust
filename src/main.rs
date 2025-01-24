@@ -68,7 +68,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         // Ensure the previous character matches at least once
         let mut count = 0;
         // Match the previous character while it matches and increase the counter
-        while ind + count < input_line.len() && input_line.chars().nth(ind + count).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+        while ind + count < input_line.len() && input_line.chars().nth(ind + count -1).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
             count += 1;
             println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]",
                      input_line.chars().nth(ind + count - 1).unwrap(),
