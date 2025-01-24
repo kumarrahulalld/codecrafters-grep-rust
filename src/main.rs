@@ -80,21 +80,19 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     if pattern_char == '+' {
         println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
 
-        // Ensure the previous character matches at least once
-        if ind < input_line.chars().count() && pattern.chars().nth(pind - 1).unwrap() == input_line.chars().nth(ind).unwrap() {
-            let mut count = 1; // We have matched the character at least once
-            println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]", input_line.chars().nth(ind).unwrap(), pattern.chars().nth(pind - 1).unwrap(), ind, pind - 1);
-            
-            // Now try to match the same character one or more times (e.g., "aa" for "a+")
-            while ind + count < input_line.chars().count() && input_line.chars().nth(ind + count).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
-                count += 1;
-                println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]", input_line.chars().nth(ind + count - 1).unwrap(), pattern.chars().nth(pind - 1).unwrap(), ind + count - 1, pind - 1);
-            }
+        let prev_char = pattern.chars().nth(pind - 1).unwrap();
 
-            // Recursively match the rest of the pattern
-            return match_pattern(input_line, pattern, ind + count, pind + 1);
+        // Ensure at least one match of the previous character
+        if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == prev_char {
+            let mut count = 0;
+            // Match the previous character one or more times
+            while ind + count < input_line.len() && input_line.chars().nth(ind + count).unwrap() == prev_char {
+                count += 1;
+            }
+            println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
+
+            return match_pattern(input_line, pattern, ind + count, pind + 1); // continue matching after the sequence
         }
-        // If no match found for '+', return false
         return false;
     }
 
