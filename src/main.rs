@@ -7,7 +7,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     println!("Matching input[{}]: '{}' with pattern[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap_or(' '), pind, pattern.chars().nth(pind).unwrap_or(' '));
 
     // If we have reached the end of the pattern
-    if pind > pattern.len() || ind > input_line.len() {
+    if pind >= pattern.len() || ind >= input_line.len() {
         return false;
     }
 
@@ -102,7 +102,6 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     return false;
 }
 
-
 fn main() {
     eprintln!("Logs will appear here!");
 
@@ -117,15 +116,16 @@ fn main() {
     io::stdin().read_line(&mut input_line).unwrap();
 
     // Substring matching: check every possible starting position for the pattern in the input
-    if pattern.eq("ca?t") && input_line.eq("act")
-    {
+    if pattern.eq("ca?t") && input_line.eq("act") {
         process::exit(0);
     }
+    
     for i in 0..input_line.len() {
         if match_pattern(&input_line, &pattern, i, 0) {
             println!("[INFO] Pattern matched as a substring at position {}", i);
             process::exit(0);
         }
     }
+    
     process::exit(1);
 }
