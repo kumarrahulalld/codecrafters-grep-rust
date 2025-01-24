@@ -7,10 +7,10 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     println!("Matching input[{}]: '{}' with pattern[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap_or(' '), pind, pattern.chars().nth(pind).unwrap_or(' '));
 
     // If we have reached the end of the pattern
-    if pind > pattern.len() || ind > input_line.len()
-    {
+    if pind > pattern.len() || ind > input_line.len() {
         return false;
     }
+
     if pind == pattern.len() {
         println!("Base case reached, pattern matched.");
         return true;
@@ -65,89 +65,32 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         return ind == input_line.len();
     }
 
+    // Handle . (matches any character)
     if pattern_char == '.' {
-        return match_pattern(input_line, pattern, ind+1, pind+1)
+        println!("Handling '.' (matches any character) at pattern[{}]", pind);
+        // Recursively match the next part of the pattern, since '.' matches any character
+        return match_pattern(input_line, pattern, ind + 1, pind + 1);
     }
 
+    // Handle + (one or more)
     if pattern_char == '+' {
-        // Log the current state
         println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
-    
+
         // Ensure the previous character matches at least once
-        let mut count = 0;
-        // Match the previous character while it matches and increase the counter
-        while ind + count < input_line.len() && input_line.chars().nth(ind + count -1).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
-            count += 1;
-            println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]",
-                     input_line.chars().nth(ind + count - 1).unwrap(),
-                     pattern.chars().nth(pind - 1).unwrap(),
-                     ind + count - 1, pind - 1);
+        if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+            let mut count = 1; // We have matched the character at least once
+            println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]", input_line.chars().nth(ind).unwrap(), pattern.chars().nth(pind - 1).unwrap(), ind, pind - 1);
+            
+            // Now try to match the same character one or more times (e.g., "aa" for "a+")
+            while ind + count < input_line.len() && input_line.chars().nth(ind + count).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+                count += 1;
+                println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]", input_line.chars().nth(ind + count - 1).unwrap(), pattern.chars().nth(pind - 1).unwrap(), ind + count - 1, pind - 1);
+            }
+
+            // Recursively match the rest of the pattern
+            return match_pattern(input_line, pattern, ind + count, pind + 1);
         }
-    
-        // If we matched at least one character, recurse to match the remaining pattern
-        if count > 0 {
-            println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
-            return match_pattern(input_line, pattern, ind + count-1, pind + 1);
-        }
-    
-        // If no match, return false
-        println!("[DEBUG] No match found for '+' wildcard at input[{}], pattern[{}]", ind, pind);
-        return false;
-    }    
-
-    
-
-    // Handle ? (zero or one)
-    if pattern_char == '?' {
-        println!("Handling '?' (zero or one) at pattern[{}]", pind);
-
-        // Option 1: Skip the current character and continue matching (i.e., treat it as zero match)
-        let skip_match = match_pattern(input_line, pattern, ind, pind + 1);
-
-        // Option 2: Match the current character and continue matching (i.e., treat it as one match)
-        let match_current = ind < input_line.len() &&
-                            input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() &&
-                            match_pattern(input_line, pattern, ind + 1, pind + 1);
-
-        // Return true if either option is successful
-        return skip_match || match_current;
-    }
-
-    // Handle character classes [abc] and [^abc]
-    if pattern_char == '[' {
-        let mut class_end = pind + 1;
-        let mut is_negated = false;
-
-        if pattern.chars().nth(pind + 1) == Some('^') {
-            is_negated = true;
-            class_end += 1;
-            println!("Negated class '[^...]' detected");
-        }
-
-        while class_end < pattern.len() && pattern.chars().nth(class_end) != Some(']') {
-            class_end += 1;
-        }
-
-        if class_end == pattern.len() {
-            println!("Failed to find closing ']' for class, returning false");
-            return false;
-        }
-
-        let class_content = &pattern[pind + 1..class_end];
-        let input_char = input_line.chars().nth(ind).unwrap();
-
-        println!("Matching input[{}]: '{}' against class '{}'", ind, input_char, class_content);
-
-        let class_match = if is_negated {
-            !class_content.contains(input_char)
-        } else {
-            class_content.contains(input_char)
-        };
-
-        if class_match {
-            println!("Class match successful for input[{}]: '{}'", ind, input_char);
-            return match_pattern(input_line, pattern, ind + 1, class_end + 1); // Move past the class
-        }
+        // If no match found for '+', return false
         return false;
     }
 
@@ -158,6 +101,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     return false;
 }
+
 
 fn main() {
     eprintln!("Logs will appear here!");
