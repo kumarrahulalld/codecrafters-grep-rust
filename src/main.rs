@@ -3,19 +3,19 @@ use std::io;
 use std::process;
 
 fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
-    if pind >= pattern.len() {
+    if pind >= pattern.chars().count() {
         return true;
     }
-    if  ind >= input_line.len() {
+    if  ind >= input_line.chars().count() {
         return false
     }
-    println!("{} {}",ind,input_line.len());
+    println!("{} {}",ind,input_line.chars().count());
     // Log the current indices and characters being compared
     println!("Matching input[{}]: '{}' with pattern[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap_or(' '), pind, pattern.chars().nth(pind).unwrap_or(' '));
 
     // If we have reached the end of the pattern
 
-    if pind == pattern.len() {
+    if pind == pattern.chars().count() {
         println!("Base case reached, pattern matched.");
         return true;
     }
@@ -24,13 +24,13 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // Handle escape sequences like \d, \w, etc.
     if pattern_char == '\\' {
-        if pind + 1 < pattern.len() {
+        if pind + 1 < pattern.chars().count() {
             let next_char = pattern.chars().nth(pind + 1).unwrap();
             println!("Escape sequence '\\{}' found", next_char);
             match next_char {
                 'd' => {
                     // If current input is a digit, match the next part of the pattern
-                    if ind < input_line.len() && input_line.chars().nth(ind).unwrap().is_digit(10) {
+                    if ind < input_line.chars().count() && input_line.chars().nth(ind).unwrap().is_digit(10) {
                         println!("Matched '\\d' (digit) at input[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap());
                         return match_pattern(input_line, pattern, ind + 1, pind + 2);
                     }
@@ -39,7 +39,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
                 }
                 'w' => {
                     // If current input is alphanumeric, match the next part of the pattern
-                    if ind < input_line.len() && input_line.chars().nth(ind).unwrap().is_alphanumeric() {
+                    if ind < input_line.chars().count() && input_line.chars().nth(ind).unwrap().is_alphanumeric() {
                         println!("Matched '\\w' (alphanumeric) at input[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap());
                         return match_pattern(input_line, pattern, ind + 1, pind + 2);
                     }
@@ -66,7 +66,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // Handle $ end of a line
     if pattern_char == '$' {
-        return ind == input_line.len();
+        return ind == input_line.chars().count();
     }
 
     // Handle . (matches any character)
@@ -81,12 +81,12 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
 
         // Ensure the previous character matches at least once
-        if ind < input_line.len() && pattern.chars().nth(pind - 1).unwrap() == input_line.chars().nth(ind).unwrap() {
+        if ind < input_line.chars().count() && pattern.chars().nth(pind - 1).unwrap() == input_line.chars().nth(ind).unwrap() {
             let mut count = 1; // We have matched the character at least once
             println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]", input_line.chars().nth(ind).unwrap(), pattern.chars().nth(pind - 1).unwrap(), ind, pind - 1);
             
             // Now try to match the same character one or more times (e.g., "aa" for "a+")
-            while ind + count < input_line.len() && input_line.chars().nth(ind + count).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+            while ind + count < input_line.chars().count() && input_line.chars().nth(ind + count).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
                 count += 1;
                 println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]", input_line.chars().nth(ind + count - 1).unwrap(), pattern.chars().nth(pind - 1).unwrap(), ind + count - 1, pind - 1);
             }
@@ -99,7 +99,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     }
 
     // Handle normal characters
-    if ind < input_line.len() && pattern_char == input_line.chars().nth(ind).unwrap() {
+    if ind < input_line.chars().count() && pattern_char == input_line.chars().nth(ind).unwrap() {
         return match_pattern(input_line, pattern, ind + 1, pind + 1);
     }
 
@@ -124,7 +124,7 @@ fn main() {
         process::exit(0);
     }
     
-    for i in 0..input_line.len() {
+    for i in 0..input_line.chars().count() {
         if match_pattern(&input_line, &pattern, i, 0) {
             println!("[INFO] Pattern matched as a substring at position {}", i);
             process::exit(0);
