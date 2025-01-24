@@ -6,7 +6,10 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     // Log the current indices and characters being compared
     println!("Matching input[{}]: '{}' with pattern[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap_or(' '), pind, pattern.chars().nth(pind).unwrap_or(' '));
 
-    // If we have reached the end of the patters
+    // If we have reached the end of the pattern
+    if pind >= pattern.len() || ind >= input_line.len() {
+        return false;
+    }
 
     if pind == pattern.len() {
         println!("Base case reached, pattern matched.");
@@ -74,7 +77,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
 
         // Ensure the previous character matches at least once
-        if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+        if ind < input_line.len() && pattern.chars().nth(pind - 1).unwrap() == input_line.chars().nth(ind).unwrap() {
             let mut count = 1; // We have matched the character at least once
             println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]", input_line.chars().nth(ind).unwrap(), pattern.chars().nth(pind - 1).unwrap(), ind, pind - 1);
             
