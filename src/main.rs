@@ -61,6 +61,10 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         return ind == input_line.len();
     }
 
+    if pattern_char == '.' {
+        return match_pattern(input_line, pattern, ind+1, pind+1)
+    }
+
     if pattern_char == '+' {
         // Log the current state
         println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
