@@ -9,6 +9,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     if  ind >= input_line.len() {
         return false
     }
+    println!("{} {}",ind,input_line.len());
     // Log the current indices and characters being compared
     println!("Matching input[{}]: '{}' with pattern[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap_or(' '), pind, pattern.chars().nth(pind).unwrap_or(' '));
 
