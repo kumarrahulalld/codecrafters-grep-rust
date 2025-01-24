@@ -7,6 +7,10 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     println!("Matching input[{}]: '{}' with pattern[{}]: '{}'", ind, input_line.chars().nth(ind).unwrap_or(' '), pind, pattern.chars().nth(pind).unwrap_or(' '));
 
     // If we have reached the end of the pattern
+    if pind > pattern.len() || ind > input_line.len()
+    {
+        return false;
+    }
     if pind == pattern.len() {
         println!("Base case reached, pattern matched.");
         return true;
