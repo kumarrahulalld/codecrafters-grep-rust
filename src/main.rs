@@ -91,7 +91,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
             }
             println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
 
-            return match_pattern(input_line, pattern, ind + count, pind); // continue matching after the sequence
+            return match_pattern(input_line, pattern, ind + count, pind-1); // continue matching after the sequence
         }
         return false;
     }
