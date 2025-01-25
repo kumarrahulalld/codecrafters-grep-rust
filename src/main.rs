@@ -1,6 +1,5 @@
 use std::env;
 use std::io;
-use std::ops::Index;
 use std::process;
 
 fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
