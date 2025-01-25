@@ -93,7 +93,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
                 // Find the next index in input_line starting from the current position
                 let next_index = input_line[ind..]
                     .find(next_char)
-                    .map(|index| index + ind); // Adjust index relative to the whole string
+                    .map(|index| index); // Adjust index relative to the whole string
         
                 // Log the result of the find operation
                 match next_index {
