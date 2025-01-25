@@ -1,5 +1,6 @@
 use std::env;
 use std::io;
+use std::ops::Index;
 use std::process;
 
 fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
@@ -81,7 +82,19 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
 
         let prev_char = pattern.chars().nth(pind - 1).unwrap();
-
+        if prev_char == '.'
+        {
+            if pind +1 < pattern.chars().count() {
+                let next_index = input_line[ind..].find(pattern.chars().nth(pind + 1).unwrap()).map(|index| index + position).unwrap();
+                if next_index < input_line.chars().count() {
+                    return match_pattern(input_line, pattern, next_index, pind +1);
+                }
+                else {
+                    return  false;
+                }
+            }
+            return false;
+        }
         // Ensure at least one match of the previous character
         if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == prev_char {
             let mut count = 0;
