@@ -137,16 +137,24 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         }
         
         // Ensure at least one match of the previous character
-        if ind < input_line.len() && input_line.chars().nth(ind).unwrap() == prev_char {
-            let mut count = 0;
-            // Match the previous character one or more times
-            while ind + count < input_line.len() && input_line.chars().nth(ind + count).unwrap() == prev_char {
-                count += 1;
-            }
-            println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
-
-            return match_pattern(input_line, pattern, ind + count, pind+1); // continue matching after the sequence
+        let mut count = 0;
+        // Match the previous character while it matches and increase the counter
+        while ind + count < input_line.len() && input_line.chars().nth(ind + count -1).unwrap() == pattern.chars().nth(pind - 1).unwrap() {
+            count += 1;
+            println!("[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]",
+                     input_line.chars().nth(ind + count - 1).unwrap(),
+                     pattern.chars().nth(pind - 1).unwrap(),
+                     ind + count - 1, pind - 1);
         }
+    
+        // If we matched at least one character, recurse to match the remaining pattern
+        if count > 0 {
+            println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
+            return match_pattern(input_line, pattern, ind + count-1, pind + 1);
+        }
+    
+        // If no match, return false
+        println!("[DEBUG] No match found for '+' wildcard at input[{}], pattern[{}]", ind, pind);
         return false;
     }
 
