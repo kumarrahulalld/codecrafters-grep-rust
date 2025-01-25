@@ -66,6 +66,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // Handle $ end of a line
     if pattern_char == '$' {
+        println!("Handlling ? {} {} {}",pind,ind,input_line.chars().count());
         return ind == input_line.chars().count();
     }
 
