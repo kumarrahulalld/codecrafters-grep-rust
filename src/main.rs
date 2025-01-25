@@ -84,7 +84,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         if prev_char == '.'
         {
             if pind +1 < pattern.chars().count() {
-                let next_index = input_line[ind..].find(pattern.chars().nth(pind + 1).unwrap()).map(|index| index + position).unwrap();
+                let next_index = input_line[ind..].find(pattern.chars().nth(pind + 1).unwrap()).map(|index| index + ind).unwrap();
                 if next_index < input_line.chars().count() {
                     return match_pattern(input_line, pattern, next_index, pind +1);
                 }
