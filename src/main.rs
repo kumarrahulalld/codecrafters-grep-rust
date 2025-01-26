@@ -162,6 +162,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     // Handle normal characters
     println!("Handling normal char {} {}",pattern_char,input_line.chars().nth(ind).unwrap());
     if ind < input_line.chars().count() && pattern_char == input_line.chars().nth(ind).unwrap() {
+        println!("calling match with {} {}",ind+1,pind+1);
         return match_pattern(input_line, pattern, ind + 1, pind + 1);
     }
 
