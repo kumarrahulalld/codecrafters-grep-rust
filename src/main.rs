@@ -158,7 +158,42 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         println!("[DEBUG] No match found for '+' wildcard at input[{}], pattern[{}]", ind, pind);
         return false;
     }
-
+    // Handle character classes [abc] and [^abc]
+    if pattern_char == '[' {
+        let mut class_end = pind + 1;
+        let mut is_negated = false;
+        if pattern.chars().nth(pind + 1) == Some('^') {
+            is_negated = true;
+            class_end += 1;
+            println!("Negated class '[^...]' detected");
+        }
+        while class_end < pattern.len() && pattern.chars().nth(class_end) != Some(']') {
+            class_end += 1;
+        }
+        if class_end == pattern.len() {
+            println!("Failed to find closing ']' for class, returning false");
+            return false;
+        }
+        let class_content = &pattern[pind + 1..class_end];
+        let input_char = input_line.chars().nth(ind).unwrap();
+        println!(
+            "Matching input[{}]: '{}' against class '{}'",
+            ind, input_char, class_content
+        );
+        let class_match = if is_negated {
+            !class_content.contains(input_char)
+        } else {
+            class_content.contains(input_char)
+        };
+        if class_match {
+            println!(
+                "Class match successful for input[{}]: '{}'",
+                ind, input_char
+            );
+            return match_pattern(input_line, pattern, ind + 1, class_end + 1); // Move past the class
+        }
+        return false;
+    }
     // Handle normal characters
     println!("Handling normal char {} {}",pattern_char,input_line.chars().nth(ind).unwrap());
     if ind < input_line.chars().count() && pattern_char == input_line.chars().nth(ind).unwrap() {
