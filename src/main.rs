@@ -7,7 +7,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         return true;
     }
     if ind >= input_line.chars().count() {
-        return pind < pattern.chars().count() && pattern.chars().nth(pind) = '$';
+        return pind < pattern.chars().count() && pattern.chars().nth(pind).unwrap() == '$';
     }
     //println!("{} {}",ind,input_line.chars().count());
     // Log the current indices and characters being compared
