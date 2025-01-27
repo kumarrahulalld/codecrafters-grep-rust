@@ -194,33 +194,43 @@ fn match_pattern(input_line: &str, mut pattern: &str, ind: usize, pind: usize) -
         }
         return false;
     }
-    if pattern_char == '(' && pattern.ends_with(")") && pattern.contains("|") {
-        println!("[DEBUG] Found a choice pattern '(|)' in the pattern.");
-    
-        // Trim the parentheses from the pattern
-        pattern = &pattern[pind+1..pattern.chars().count() - 1];
-        println!("[DEBUG] Pattern after trimming parentheses: {}", pattern);
-    
-        // Split the pattern at the pipe character
-        let patterns: Vec<&str> = pattern.split("|").collect();
-        println!("[DEBUG] Pattern split into alternatives: {:?}", patterns);
-    
-        let mut result = false;
-        // Try matching each pattern variant
-        for pat in patterns {
-            println!("[DEBUG] Trying to match with pattern: '{}'", pat);
-    
-            // Recursively call match_pattern for each option in the alternatives
-            result = result || match_pattern(input_line, pat, ind, 0);
-    
-            if result {
-                println!("[DEBUG] Pattern '{}' matched successfully!", pat);
-                break; // Exit early once a match is found
-            } else {
-                println!("[DEBUG] Pattern '{}' did not match.", pat);
+    if pattern_char == '(' {
+        println!("[DEBUG] Found opening parenthesis '(' in the pattern.");
+
+        // Find the closing parenthesis that matches the current opening parenthesis
+        let mut balance = 1;
+        let mut end_pind = pind + 1;
+
+        while end_pind < pattern.chars().count() && balance > 0 {
+            let current_char = pattern.chars().nth(end_pind).unwrap();
+            if current_char == '(' {
+                balance += 1;
+            } else if current_char == ')' {
+                balance -= 1;
             }
+            end_pind += 1;
         }
-    
+
+        if balance != 0 {
+            println!("[DEBUG] Unbalanced parentheses. Returning false.");
+            return false; // Unbalanced parentheses, return false
+        }
+
+        // Now extract the inner pattern inside the parentheses
+        let inner_pattern = &pattern[pind + 1..end_pind - 1];
+        println!("[DEBUG] Matching inside the parentheses: '{}'", inner_pattern);
+
+        // Split the inner pattern by alternation (|)
+        let patterns: Vec<&str> = inner_pattern.split('|').collect();
+        println!("[DEBUG] Alternation patterns inside parentheses: {:?}", patterns);
+
+        // Try matching each alternative pattern
+        let mut result = false;
+        for pat in patterns {
+            println!("[DEBUG] Trying pattern: '{}'", pat);
+            result = result || match_pattern(input_line, pat, ind, pind + end_pind);
+        }
+
         return result;
     }
     
