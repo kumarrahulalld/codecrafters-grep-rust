@@ -194,16 +194,36 @@ fn match_pattern(input_line: &str, mut pattern: &str, ind: usize, pind: usize) -
         }
         return false;
     }
-    if pattern_char == '(' && pattern.ends_with(")") && pattern.contains("|")
-    {
-        pattern = &pattern[1..pattern.chars().count()-1];
-        let patterns:Vec<&str> = pattern.split("|").collect();
+    if pattern_char == '(' && pattern.ends_with(")") && pattern.contains("|") {
+        println!("[DEBUG] Found a choice pattern '(|)' in the pattern.");
+    
+        // Trim the parentheses from the pattern
+        pattern = &pattern[1..pattern.chars().count() - 1];
+        println!("[DEBUG] Pattern after trimming parentheses: {}", pattern);
+    
+        // Split the pattern at the pipe character
+        let patterns: Vec<&str> = pattern.split("|").collect();
+        println!("[DEBUG] Pattern split into alternatives: {:?}", patterns);
+    
         let mut result = false;
+        // Try matching each pattern variant
         for pat in patterns {
+            println!("[DEBUG] Trying to match with pattern: '{}'", pat);
+    
+            // Recursively call match_pattern for each option in the alternatives
             result = result || match_pattern(input_line, pat, ind, 0);
+    
+            if result {
+                println!("[DEBUG] Pattern '{}' matched successfully!", pat);
+                break; // Exit early once a match is found
+            } else {
+                println!("[DEBUG] Pattern '{}' did not match.", pat);
+            }
         }
+    
         return result;
     }
+    
     // Handle normal characters
     println!("Handling normal char {} {}",pattern_char,input_line.chars().nth(ind).unwrap());
     if ind < input_line.chars().count() && pattern_char == input_line.chars().nth(ind).unwrap() {
