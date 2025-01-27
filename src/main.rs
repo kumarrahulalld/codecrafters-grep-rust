@@ -2,7 +2,7 @@ use std::env;
 use std::io;
 use std::process;
 
-fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bool {
+fn match_pattern(input_line: &str, mut pattern: &str, ind: usize, pind: usize) -> bool {
     if pind >= pattern.chars().count() {
         return true;
     }
@@ -194,6 +194,16 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         }
         return false;
     }
+    if pattern_char == '(' && pattern.ends_with(")") && pattern.contains("|")
+    {
+        pattern = &pattern[1..pattern.chars().count()-1];
+        let patterns:Vec<&str> = pattern.split("|").collect();
+        let mut result = false;
+        for pat in patterns {
+            result = result || match_pattern(input_line, pat, ind, 0);
+        }
+        return result;
+    }
     // Handle normal characters
     println!("Handling normal char {} {}",pattern_char,input_line.chars().nth(ind).unwrap());
     if ind < input_line.chars().count() && pattern_char == input_line.chars().nth(ind).unwrap() {
@@ -212,7 +222,7 @@ fn main() {
         process::exit(1);
     }
 
-    let pattern = env::args().nth(2).unwrap();
+    let mut pattern = env::args().nth(2).unwrap();
     let mut input_line = String::new();
 
     io::stdin().read_line(&mut input_line).unwrap();
