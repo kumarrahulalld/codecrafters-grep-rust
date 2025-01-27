@@ -198,7 +198,7 @@ fn match_pattern(input_line: &str, mut pattern: &str, ind: usize, pind: usize) -
         println!("[DEBUG] Found a choice pattern '(|)' in the pattern.");
     
         // Trim the parentheses from the pattern
-        pattern = &pattern[1..pattern.chars().count() - 1];
+        pattern = &pattern[pind+1..pattern.chars().count() - 1];
         println!("[DEBUG] Pattern after trimming parentheses: {}", pattern);
     
         // Split the pattern at the pipe character
