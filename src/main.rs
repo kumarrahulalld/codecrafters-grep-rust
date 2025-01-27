@@ -227,7 +227,7 @@ fn match_pattern(input_line: &str, mut pattern: &str, ind: usize, pind: usize) -
         // Try matching each alternative pattern
         let mut result = false;
         for pat in patterns {
-            println!("[DEBUG] Trying pattern: '{}'", pat);
+            println!("[DEBUG] Trying pattern: '{}' {} {}", pat,ind,pind+end_pind);
             result = result || match_pattern(input_line, pat, ind, pind + end_pind);
         }
 
