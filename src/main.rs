@@ -122,20 +122,13 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     // Handle nested patterns
     if pattern.chars().nth(pind).unwrap() == '(' {
         println!("[DEBUG] Found opening parenthesis '(' in the pattern.");
-        let mut balance = 1;
         let mut end_pind = pind + 1;
-        while end_pind < pattern.chars().count() && balance > 0 {
+        while end_pind < pattern.chars().count() {
             let current_char = pattern.chars().nth(end_pind).unwrap();
-            if current_char == '(' {
-                balance += 1;
-            } else if current_char == ')' {
-                balance -= 1;
+            if current_char == ')' {
+                break;
             }
             end_pind += 1;
-        }
-        if balance != 0 {
-            println!("[DEBUG] Unbalanced parentheses. Returning false.");
-            return false;
         }
         let inner_pattern = &pattern[pind + 1..end_pind - 1];
         println!("[DEBUG] Matching inside the parentheses: '{}'", inner_pattern);
