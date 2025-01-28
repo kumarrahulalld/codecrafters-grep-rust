@@ -137,7 +137,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         let mut result = false;
         for pat in patterns {
             println!("[DEBUG] Trying pattern: '{}' at input[{}], pattern[{}]", pat, ind, pind + 1);
-            if match_pattern(input_line, pat, ind, pind+1) {
+            if match_pattern(input_line, pat, ind, pind) {
                 result = true;
                 break;
             }
