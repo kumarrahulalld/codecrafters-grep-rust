@@ -130,7 +130,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
             }
             end_pind += 1;
         }
-        let inner_pattern = &pattern[pind + 1..end_pind - 1];
+        let inner_pattern = &pattern[pind + 1..end_pind];
         println!("[DEBUG] Matching inside the parentheses: '{}'", inner_pattern);
         let patterns: Vec<&str> = inner_pattern.split('|').collect();
         println!("[DEBUG] Alternation patterns inside parentheses: {:?}", patterns);
