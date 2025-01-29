@@ -76,7 +76,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
 
     // Handle + (one or more)
      // Handle + (one or more)
-     if pattern_char == '+' {
+     if pattern.chars().nth(pind).unwrap() == '+' {
         println!(
             "[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]",
             pind, ind
