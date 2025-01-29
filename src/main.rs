@@ -142,7 +142,7 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
                 break;
             }
         }
-        return result && match_pattern(input_line, pattern, ind, pind+1);
+        return result && match_pattern(input_line, pattern, ind, end_pind + 1);
     }
 
     // Handle normal characters
