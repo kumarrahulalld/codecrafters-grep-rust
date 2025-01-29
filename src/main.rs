@@ -135,15 +135,17 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
         let patterns: Vec<&str> = inner_pattern.split('|').collect();
         println!("[DEBUG] Alternation patterns inside parentheses: {:?}", patterns);
         let mut result = false;
+        let mut ii = 0;
         for pat in patterns {
             println!("[DEBUG] Trying pattern: '{}' at input[{}], pattern[{}]", pat, ind, pind + 1);
             if match_pattern(input_line, pat, ind, 0) {
                 result = true;
+                ii = pat.chars().count();
                 break;
             }
         }
         println!("Calling AND {} {}",ind,end_pind+1);
-        return result && match_pattern(input_line, pattern, ind, end_pind + 1);
+        return result && match_pattern(input_line, pattern, ind + ii, end_pind + 1);
     }
 
     // Handle normal characters
