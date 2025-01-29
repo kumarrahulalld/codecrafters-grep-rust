@@ -75,16 +75,87 @@ fn match_pattern(input_line: &str, pattern: &str, ind: usize, pind: usize) -> bo
     }
 
     // Handle + (one or more)
-    if pattern.chars().nth(pind).unwrap() == '+' {
-        println!("[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]", pind, ind);
+     // Handle + (one or more)
+     if pattern_char == '+' {
+        println!(
+            "[DEBUG] Handling '+' (one or more) at pattern[{}], input[{}]",
+            pind, ind
+        );
         let prev_char = pattern.chars().nth(pind - 1).unwrap();
+        if prev_char == '.' {
+            // Log the current state
+            println!(
+                "[DEBUG] Handling '.' (any character match) at pattern[{}]: '{}'",
+                pind, prev_char
+            );
+            // Check if there's a next character in the pattern to match
+            if pind + 1 < pattern.chars().count() {
+                let next_char = pattern.chars().nth(pind + 1).unwrap();
+                println!(
+                    "[DEBUG] Next character to match after '.' is '{}'",
+                    next_char
+                );
+                // Find the next index in input_line starting from the current position
+                let next_index = input_line[ind..].find(next_char).map(|index| index); // Adjust index relative to the whole string
+                // Log the result of the find operation
+                match next_index {
+                    Some(index) => {
+                        println!(
+                            "[DEBUG] Found '{}' at index {} in input_line from position {}",
+                            next_char, index, ind
+                        );
+                        if index < input_line.chars().count() {
+                            println!("[DEBUG] Recursively calling match_pattern with new indices: input_index = {}, pattern_index = {}", index, pind + 1);
+                            return match_pattern(input_line, pattern, index, pind + 1);
+                        } else {
+                            // Log when the next index is out of bounds
+                            println!(
+                                "[DEBUG] Next index {} is out of bounds in the input string",
+                                index
+                            );
+                            return false;
+                        }
+                    }
+                    None => {
+                        // Log if the character was not found
+                        println!(
+                            "[DEBUG] Character '{}' not found after position {}",
+                            next_char, ind
+                        );
+                        return false;
+                    }
+                }
+            }
+            // If there is no next character to match
+            println!("[DEBUG] No next character after '.' at pattern[{}]", pind);
+            return false;
+        }
+        // Ensure at least one match of the previous character
         let mut count = 0;
-        while ind + count < input_line.len() && input_line.chars().nth(ind + count).unwrap() == prev_char {
+        // Match the previous character while it matches and increase the counter
+        while ind + count < input_line.len()
+            && input_line.chars().nth(ind + count - 1).unwrap()
+                == pattern.chars().nth(pind - 1).unwrap()
+        {
             count += 1;
+            println!(
+                "[DEBUG] Matched '{}' (input) with '{}' (pattern) at input[{}], pattern[{}]",
+                input_line.chars().nth(ind + count - 1).unwrap(),
+                pattern.chars().nth(pind - 1).unwrap(),
+                ind + count - 1,
+                pind - 1
+            );
         }
+        // If we matched at least one character, recurse to match the remaining pattern
         if count > 0 {
-            return match_pattern(input_line, pattern, ind + count, pind + 1);
+            println!("[DEBUG] Matched {} characters with '+'. Recursively matching the rest of the pattern.", count);
+            return match_pattern(input_line, pattern, ind + count - 1, pind + 1);
         }
+        // If no match, return false
+        println!(
+            "[DEBUG] No match found for '+' wildcard at input[{}], pattern[{}]",
+            ind, pind
+        );
         return false;
     }
 
